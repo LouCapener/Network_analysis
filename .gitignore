@@ -1,5 +1,4 @@
-spacy/lib/
-spacy/bin/
 .ipynb_checkpoints
 .DS_Store 
-Spacy/
+spacy/
+get-pip.py
