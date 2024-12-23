@@ -2,3 +2,5 @@
 .DS_Store 
 spacy/
 get-pip.py
+lib/
+southpark.html
