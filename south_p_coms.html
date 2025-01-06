@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 700px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 1000px;
+                 height: 700px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "white"}, "group": 0, "id": "Cartman", "label": "Cartman", "shape": "dot", "size": 66}, {"font": {"color": "white"}, "group": 1, "id": "Kyle", "label": "Kyle", "shape": "dot", "size": 55}, {"font": {"color": "white"}, "group": 2, "id": "Butters", "label": "Butters", "shape": "dot", "size": 30}, {"font": {"color": "white"}, "group": 5, "id": "Kenny", "label": "Kenny", "shape": "dot", "size": 14}, {"font": {"color": "white"}, "group": 5, "id": "God", "label": "God", "shape": "dot", "size": 23}, {"font": {"color": "white"}, "group": 5, "id": "All", "label": "All", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": 3, "id": "Dude", "label": "Dude", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 8, "id": "Stan", "label": "Stan", "shape": "dot", "size": 56}, {"font": {"color": "white"}, "group": 8, "id": "Mom", "label": "Mom", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 1, "id": "Tolkien", "label": "Tolkien", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 2, "id": "Jesus", "label": "Jesus", "shape": "dot", "size": 14}, {"font": {"color": "white"}, "group": 0, "id": "Clyde", "label": "Clyde", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 3, "id": "Craig", "label": "Craig", "shape": "dot", "size": 7}, {"font": {"color": "white"}, "group": 16, "id": "Heidi", "label": "Heidi", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 1, "id": "Wendy", "label": "Wendy", "shape": "dot", "size": 13}, {"font": {"color": "white"}, "group": 13, "id": "Scott", "label": "Scott", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 16, "id": "Jimmy", "label": "Jimmy", "shape": "dot", "size": 13}, {"font": {"color": "white"}, "group": 8, "id": "Right", "label": "Right", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 16, "id": "Eric", "label": "Eric", "shape": "dot", "size": 14}, {"font": {"color": "white"}, "group": 1, "id": "Man", "label": "Man", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Kitty", "label": "Kitty", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Chef", "label": "Chef", "shape": "dot", "size": 13}, {"font": {"color": "white"}, "group": 3, "id": "Tweek", "label": "Tweek", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 8, "id": "TV", "label": "TV", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 8, "id": "Everyone", "label": "Everyone", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 1, "id": "Red", "label": "Red", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 1, "id": "Garrison", "label": "Garrison", "shape": "dot", "size": 11}, {"font": {"color": "white"}, "group": 5, "id": "People", "label": "People", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 1, "id": "Family", "label": "Family", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "American", "label": "American", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Alexa", "label": "Alexa", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "David", "label": "David", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Captain", "label": "Captain", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Somebody", "label": "Somebody", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Mackey", "label": "Mackey", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 8, "id": "Mel", "label": "Mel", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "President", "label": "President", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 1, "id": "Principal", "label": "Principal", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 0, "id": "Bebe", "label": "Bebe", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 0, "id": "Billy", "label": "Billy", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Polly", "label": "Polly", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 16, "id": "Timmy", "label": "Timmy", "shape": "dot", "size": 7}, {"font": {"color": "white"}, "group": 13, "id": "Phillip", "label": "Phillip", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 0, "id": "Mexican", "label": "Mexican", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Bill", "label": "Bill", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Jefferson", "label": "Jefferson", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Son", "label": "Son", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Tom", "label": "Tom", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 13, "id": "Terrance", "label": "Terrance", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": 2, "id": "Santa", "label": "Santa", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 0, "id": "Coon", "label": "Coon", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Jakov", "label": "Jakov", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Pete", "label": "Pete", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Everybody", "label": "Everybody", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Marvin", "label": "Marvin", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Mexicans", "label": "Mexicans", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Ike", "label": "Ike", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 0, "id": "Mother", "label": "Mother", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Mr. Mackey", "label": "Mr. Mackey", "shape": "dot", "size": 11}, {"font": {"color": "white"}, "group": 0, "id": "PC Principal", "label": "PC Principal", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 8, "id": "Dad", "label": "Dad", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 1, "id": "Steve", "label": "Steve", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 13, "id": "Canadian", "label": "Canadian", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 1, "id": "Jambu", "label": "Jambu", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Sheila", "label": "Sheila", "shape": "dot", "size": 7}, {"font": {"color": "white"}, "group": 5, "id": "Gerald", "label": "Gerald", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 5, "id": "Mr. Garrison", "label": "Mr. Garrison", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": 2, "id": "Mr. Hankey", "label": "Mr. Hankey", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 16, "id": "Mrs. Garrison", "label": "Mrs. Garrison", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 1, "id": "Time Child", "label": "Time Child", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Boy", "label": "Boy", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Grandma", "label": "Grandma", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Lexus", "label": "Lexus", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "General", "label": "General", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Father", "label": "Father", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Stephen", "label": "Stephen", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 2, "id": "Linda", "label": "Linda", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 2, "id": "Chris", "label": "Chris", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 2, "id": "Dr. Janus", "label": "Dr. Janus", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Choir", "label": "Choir", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Grandpa", "label": "Grandpa", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Token", "label": "Token", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Sparky", "label": "Sparky", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Jimbo", "label": "Jimbo", "shape": "dot", "size": 7}, {"font": {"color": "white"}, "group": 8, "id": "ManBearPig", "label": "ManBearPig", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Shelly", "label": "Shelly", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 8, "id": "New", "label": "New", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Uncle", "label": "Uncle", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Smith", "label": "Smith", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Towelie", "label": "Towelie", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "John", "label": "John", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Muhammad", "label": "Muhammad", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Al", "label": "Al", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Pip", "label": "Pip", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 8, "id": "Randy", "label": "Randy", "shape": "dot", "size": 33}, {"font": {"color": "white"}, "group": 5, "id": "Sharon", "label": "Sharon", "shape": "dot", "size": 9}, {"font": {"color": "white"}, "group": 5, "id": "Carol", "label": "Carol", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Michael", "label": "Michael", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 5, "id": "Stuart", "label": "Stuart", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Announcer", "label": "Announcer", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 2, "id": "Satan", "label": "Satan", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 5, "id": "Mayor McDaniels", "label": "Mayor McDaniels", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 0, "id": "Woman", "label": "Woman", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Stanley", "label": "Stanley", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 8, "id": "Nelson", "label": "Nelson", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Darryl", "label": "Darryl", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Mayor", "label": "Mayor", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Boys", "label": "Boys", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Obama", "label": "Obama", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Shelley", "label": "Shelley", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Cruise", "label": "Cruise", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Crowd", "label": "Crowd", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Yates", "label": "Yates", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 16, "id": "Liane", "label": "Liane", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Principal Victoria", "label": "Principal Victoria", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 16, "id": "Stella", "label": "Stella", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 16, "id": "Ms. Stevens", "label": "Ms. Stevens", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Mr. Slave", "label": "Mr. Slave", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Betsy", "label": "Betsy", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 16, "id": "woman", "label": "woman", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "The Boys", "label": "The Boys", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Ned", "label": "Ned", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Hat", "label": "Hat", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Rick", "label": "Rick", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Barbrady", "label": "Barbrady", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Officer", "label": "Officer", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Filmore", "label": "Filmore", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Celine", "label": "Celine", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Narrator", "label": "Narrator", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 2, "id": "Mark", "label": "Mark", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 16, "id": "Nathan", "label": "Nathan", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Tooth", "label": "Tooth", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Skyler", "label": "Skyler", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Reporter", "label": "Reporter", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Field reporter", "label": "Field reporter", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Field Reporter", "label": "Field Reporter", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 2, "id": "Saddam", "label": "Saddam", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 3, "id": "Richard", "label": "Richard", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 16, "id": "Mimsy", "label": "Mimsy", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 8, "id": "Al Gore", "label": "Al Gore", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Mr. Hat", "label": "Mr. Hat", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Mr. Dawkins", "label": "Mr. Dawkins", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 3, "id": "Fianc\u00e9e", "label": "Fianc\u00e9e", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 14, "id": "Mingie", "label": "Mingie", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 14, "id": "Gary", "label": "Gary", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Blanket", "label": "Blanket", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 15, "id": "Cartman as Jennifer Lopez", "label": "Cartman as Jennifer Lopez", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 15, "id": "Ben", "label": "Ben", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 15, "id": "Jenny", "label": "Jenny", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 4, "id": "Russell Crowe", "label": "Russell Crowe", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 4, "id": "Tugger", "label": "Tugger", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Customer", "label": "Customer", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 0, "id": "Jeff", "label": "Jeff", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Joe", "label": "Joe", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 13, "id": "Ladies", "label": "Ladies", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 6, "id": "Elder Garth", "label": "Elder Garth", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 6, "id": "Haman", "label": "Haman", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 7, "id": "Cat", "label": "Cat", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 7, "id": "Johnson", "label": "Johnson", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 9, "id": "Chief elder", "label": "Chief elder", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 9, "id": "Moses", "label": "Moses", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 10, "id": "Crowd Members", "label": "Crowd Members", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 10, "id": "Douche", "label": "Douche", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 11, "id": "The C***", "label": "The C***", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 11, "id": "Mysterion", "label": "Mysterion", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 12, "id": "Singers", "label": "Singers", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 12, "id": "Paris", "label": "Paris", "shape": "dot", "size": 1}]);
+                  edges = new vis.DataSet([{"count": 564, "from": "Cartman", "to": "Kyle", "width": 1}, {"count": 22, "from": "Cartman", "to": "Butters", "width": 1}, {"count": 14, "from": "Cartman", "to": "Kenny", "width": 1}, {"count": 388, "from": "Cartman", "to": "God", "width": 1}, {"count": 244, "from": "Cartman", "to": "All", "width": 1}, {"count": 229, "from": "Cartman", "to": "Dude", "width": 1}, {"count": 373, "from": "Cartman", "to": "Stan", "width": 1}, {"count": 203, "from": "Cartman", "to": "Mom", "width": 1}, {"count": 164, "from": "Cartman", "to": "Tolkien", "width": 1}, {"count": 129, "from": "Cartman", "to": "Jesus", "width": 1}, {"count": 127, "from": "Cartman", "to": "Clyde", "width": 1}, {"count": 92, "from": "Cartman", "to": "Craig", "width": 1}, {"count": 90, "from": "Cartman", "to": "Heidi", "width": 1}, {"count": 16, "from": "Cartman", "to": "Wendy", "width": 1}, {"count": 84, "from": "Cartman", "to": "Scott", "width": 1}, {"count": 73, "from": "Cartman", "to": "Jimmy", "width": 1}, {"count": 62, "from": "Cartman", "to": "Right", "width": 1}, {"count": 61, "from": "Cartman", "to": "Eric", "width": 1}, {"count": 57, "from": "Cartman", "to": "Cartman", "width": 1}, {"count": 46, "from": "Cartman", "to": "Man", "width": 1}, {"count": 46, "from": "Cartman", "to": "Kitty", "width": 1}, {"count": 38, "from": "Cartman", "to": "Chef", "width": 1}, {"count": 37, "from": "Cartman", "to": "Tweek", "width": 1}, {"count": 37, "from": "Cartman", "to": "TV", "width": 1}, {"count": 33, "from": "Cartman", "to": "Everyone", "width": 1}, {"count": 33, "from": "Cartman", "to": "Red", "width": 1}, {"count": 31, "from": "Cartman", "to": "Garrison", "width": 1}, {"count": 28, "from": "Cartman", "to": "People", "width": 1}, {"count": 26, "from": "Cartman", "to": "Family", "width": 1}, {"count": 26, "from": "Cartman", "to": "American", "width": 1}, {"count": 23, "from": "Cartman", "to": "Alexa", "width": 1}, {"count": 22, "from": "Cartman", "to": "David", "width": 1}, {"count": 21, "from": "Cartman", "to": "Captain", "width": 1}, {"count": 21, "from": "Cartman", "to": "Somebody", "width": 1}, {"count": 21, "from": "Cartman", "to": "Mackey", "width": 1}, {"count": 20, "from": "Cartman", "to": "Mel", "width": 1}, {"count": 20, "from": "Cartman", "to": "President", "width": 1}, {"count": 20, "from": "Cartman", "to": "Principal", "width": 1}, {"count": 20, "from": "Cartman", "to": "Bebe", "width": 1}, {"count": 18, "from": "Cartman", "to": "Billy", "width": 1}, {"count": 18, "from": "Cartman", "to": "Polly", "width": 1}, {"count": 17, "from": "Cartman", "to": "Timmy", "width": 1}, {"count": 17, "from": "Cartman", "to": "Phillip", "width": 1}, {"count": 16, "from": "Cartman", "to": "Mexican", "width": 1}, {"count": 16, "from": "Cartman", "to": "Bill", "width": 1}, {"count": 15, "from": "Cartman", "to": "Jefferson", "width": 1}, {"count": 14, "from": "Cartman", "to": "Son", "width": 1}, {"count": 14, "from": "Cartman", "to": "Tom", "width": 1}, {"count": 13, "from": "Cartman", "to": "Terrance", "width": 1}, {"count": 13, "from": "Cartman", "to": "Santa", "width": 1}, {"count": 13, "from": "Cartman", "to": "Coon", "width": 1}, {"count": 12, "from": "Cartman", "to": "Jakov", "width": 1}, {"count": 12, "from": "Cartman", "to": "Pete", "width": 1}, {"count": 12, "from": "Cartman", "to": "Everybody", "width": 1}, {"count": 11, "from": "Cartman", "to": "Marvin", "width": 1}, {"count": 11, "from": "Cartman", "to": "Mexicans", "width": 1}, {"count": 11, "from": "Cartman", "to": "Ike", "width": 1}, {"count": 11, "from": "Cartman", "to": "Mother", "width": 1}, {"count": 12, "from": "Cartman", "to": "Mr. Mackey", "width": 1}, {"count": 14, "from": "Cartman", "to": "PC Principal", "width": 1}, {"count": 361, "from": "Kyle", "to": "Dude", "width": 1}, {"count": 320, "from": "Kyle", "to": "Stan", "width": 1}, {"count": 19, "from": "Kyle", "to": "Ike", "width": 1}, {"count": 12, "from": "Kyle", "to": "Kenny", "width": 1}, {"count": 68, "from": "Kyle", "to": "Butters", "width": 1}, {"count": 149, "from": "Kyle", "to": "God", "width": 1}, {"count": 109, "from": "Kyle", "to": "All", "width": 1}, {"count": 83, "from": "Kyle", "to": "Dad", "width": 1}, {"count": 14, "from": "Kyle", "to": "Chef", "width": 1}, {"count": 69, "from": "Kyle", "to": "Jesus", "width": 1}, {"count": 59, "from": "Kyle", "to": "Mom", "width": 1}, {"count": 12, "from": "Kyle", "to": "Tolkien", "width": 1}, {"count": 13, "from": "Kyle", "to": "Jimmy", "width": 1}, {"count": 31, "from": "Kyle", "to": "Terrance", "width": 1}, {"count": 31, "from": "Kyle", "to": "Phillip", "width": 1}, {"count": 30, "from": "Kyle", "to": "Kyle", "width": 1}, {"count": 30, "from": "Kyle", "to": "Garrison", "width": 1}, {"count": 27, "from": "Kyle", "to": "Tweek", "width": 1}, {"count": 27, "from": "Kyle", "to": "Everyone", "width": 1}, {"count": 22, "from": "Kyle", "to": "Wendy", "width": 1}, {"count": 21, "from": "Kyle", "to": "Right", "width": 1}, {"count": 21, "from": "Kyle", "to": "Timmy", "width": 1}, {"count": 20, "from": "Kyle", "to": "TV", "width": 1}, {"count": 18, "from": "Kyle", "to": "People", "width": 1}, {"count": 18, "from": "Kyle", "to": "Steve", "width": 1}, {"count": 18, "from": "Kyle", "to": "Craig", "width": 1}, {"count": 11, "from": "Kyle", "to": "Heidi", "width": 1}, {"count": 15, "from": "Kyle", "to": "President", "width": 1}, {"count": 13, "from": "Kyle", "to": "Principal", "width": 1}, {"count": 12, "from": "Kyle", "to": "Eric", "width": 1}, {"count": 12, "from": "Kyle", "to": "Canadian", "width": 1}, {"count": 12, "from": "Kyle", "to": "Marvin", "width": 1}, {"count": 12, "from": "Kyle", "to": "Clyde", "width": 1}, {"count": 12, "from": "Kyle", "to": "Family", "width": 1}, {"count": 11, "from": "Kyle", "to": "Jambu", "width": 1}, {"count": 11, "from": "Kyle", "to": "David", "width": 1}, {"count": 11, "from": "Kyle", "to": "Man", "width": 1}, {"count": 141, "from": "Kyle", "to": "Sheila", "width": 1}, {"count": 108, "from": "Kyle", "to": "Gerald", "width": 1}, {"count": 34, "from": "Kyle", "to": "Mr. Garrison", "width": 1}, {"count": 39, "from": "Kyle", "to": "Mr. Mackey", "width": 1}, {"count": 35, "from": "Kyle", "to": "Mr. Hankey", "width": 1}, {"count": 13, "from": "Kyle", "to": "Mrs. Garrison", "width": 1}, {"count": 11, "from": "Kyle", "to": "Time Child", "width": 1}, {"count": 198, "from": "Butters", "to": "Eric", "width": 1}, {"count": 94, "from": "Butters", "to": "Dad", "width": 1}, {"count": 167, "from": "Butters", "to": "Stan", "width": 1}, {"count": 54, "from": "Butters", "to": "God", "width": 1}, {"count": 52, "from": "Butters", "to": "Butters", "width": 1}, {"count": 51, "from": "Butters", "to": "Mom", "width": 1}, {"count": 36, "from": "Butters", "to": "Jesus", "width": 1}, {"count": 27, "from": "Butters", "to": "All", "width": 1}, {"count": 26, "from": "Butters", "to": "Boy", "width": 1}, {"count": 24, "from": "Butters", "to": "Kenny", "width": 1}, {"count": 18, "from": "Butters", "to": "Wendy", "width": 1}, {"count": 14, "from": "Butters", "to": "Grandma", "width": 1}, {"count": 14, "from": "Butters", "to": "Lexus", "width": 1}, {"count": 13, "from": "Butters", "to": "General", "width": 1}, {"count": 13, "from": "Butters", "to": "Jimmy", "width": 1}, {"count": 13, "from": "Butters", "to": "Clyde", "width": 1}, {"count": 13, "from": "Butters", "to": "Father", "width": 1}, {"count": 12, "from": "Butters", "to": "Craig", "width": 1}, {"count": 132, "from": "Butters", "to": "Stephen", "width": 1}, {"count": 16, "from": "Butters", "to": "Mr. Garrison", "width": 1}, {"count": 79, "from": "Butters", "to": "Linda", "width": 1}, {"count": 24, "from": "Butters", "to": "Chris", "width": 1}, {"count": 31, "from": "Butters", "to": "Dr. Janus", "width": 1}, {"count": 14, "from": "Butters", "to": "Choir", "width": 1}, {"count": 495, "from": "Stan", "to": "Dude", "width": 1}, {"count": 281, "from": "Stan", "to": "Dad", "width": 1}, {"count": 193, "from": "Stan", "to": "Kenny", "width": 1}, {"count": 146, "from": "Stan", "to": "God", "width": 1}, {"count": 125, "from": "Stan", "to": "All", "width": 1}, {"count": 118, "from": "Stan", "to": "Jesus", "width": 1}, {"count": 20, "from": "Stan", "to": "Chef", "width": 1}, {"count": 89, "from": "Stan", "to": "Mom", "width": 1}, {"count": 79, "from": "Stan", "to": "Wendy", "width": 1}, {"count": 39, "from": "Stan", "to": "Craig", "width": 1}, {"count": 39, "from": "Stan", "to": "Grandpa", "width": 1}, {"count": 34, "from": "Stan", "to": "Token", "width": 1}, {"count": 33, "from": "Stan", "to": "TV", "width": 1}, {"count": 29, "from": "Stan", "to": "Tweek", "width": 1}, {"count": 28, "from": "Stan", "to": "Garrison", "width": 1}, {"count": 26, "from": "Stan", "to": "Stan", "width": 1}, {"count": 26, "from": "Stan", "to": "Timmy", "width": 1}, {"count": 23, "from": "Stan", "to": "Jimmy", "width": 1}, {"count": 24, "from": "Stan", "to": "Sparky", "width": 1}, {"count": 12, "from": "Stan", "to": "Tolkien", "width": 1}, {"count": 23, "from": "Stan", "to": "Mackey", "width": 1}, {"count": 22, "from": "Stan", "to": "Phillip", "width": 1}, {"count": 22, "from": "Stan", "to": "Jimbo", "width": 1}, {"count": 21, "from": "Stan", "to": "Right", "width": 1}, {"count": 21, "from": "Stan", "to": "ManBearPig", "width": 1}, {"count": 20, "from": "Stan", "to": "Terrance", "width": 1}, {"count": 20, "from": "Stan", "to": "People", "width": 1}, {"count": 17, "from": "Stan", "to": "Shelly", "width": 1}, {"count": 17, "from": "Stan", "to": "New", "width": 1}, {"count": 16, "from": "Stan", "to": "Man", "width": 1}, {"count": 16, "from": "Stan", "to": "Uncle", "width": 1}, {"count": 16, "from": "Stan", "to": "Mel", "width": 1}, {"count": 14, "from": "Stan", "to": "Smith", "width": 1}, {"count": 14, "from": "Stan", "to": "Towelie", "width": 1}, {"count": 13, "from": "Stan", "to": "John", "width": 1}, {"count": 13, "from": "Stan", "to": "Clyde", "width": 1}, {"count": 12, "from": "Stan", "to": "Everyone", "width": 1}, {"count": 12, "from": "Stan", "to": "Muhammad", "width": 1}, {"count": 11, "from": "Stan", "to": "Al", "width": 1}, {"count": 11, "from": "Stan", "to": "Red", "width": 1}, {"count": 11, "from": "Stan", "to": "Pip", "width": 1}, {"count": 272, "from": "Stan", "to": "Randy", "width": 1}, {"count": 40, "from": "Stan", "to": "Sharon", "width": 1}, {"count": 18, "from": "Stan", "to": "Mr. Garrison", "width": 1}, {"count": 16, "from": "Stan", "to": "Mr. Mackey", "width": 1}, {"count": 15, "from": "Dude", "to": "Kenny", "width": 1}, {"count": 14, "from": "Dude", "to": "Craig", "width": 1}, {"count": 11, "from": "Kenny", "to": "God", "width": 1}, {"count": 11, "from": "Kenny", "to": "Chef", "width": 1}, {"count": 19, "from": "Kenny", "to": "Mr. Garrison", "width": 1}, {"count": 34, "from": "Kenny", "to": "Carol", "width": 1}, {"count": 12, "from": "Kenny", "to": "Michael", "width": 1}, {"count": 18, "from": "Kenny", "to": "Stuart", "width": 1}, {"count": 15, "from": "Kenny", "to": "Announcer", "width": 1}, {"count": 96, "from": "God", "to": "Randy", "width": 1}, {"count": 29, "from": "God", "to": "Sharon", "width": 1}, {"count": 26, "from": "God", "to": "Sheila", "width": 1}, {"count": 12, "from": "God", "to": "Jesus", "width": 1}, {"count": 36, "from": "God", "to": "Gerald", "width": 1}, {"count": 17, "from": "God", "to": "Chef", "width": 1}, {"count": 13, "from": "God", "to": "Jimbo", "width": 1}, {"count": 18, "from": "God", "to": "Mr. Garrison", "width": 1}, {"count": 14, "from": "God", "to": "Wendy", "width": 1}, {"count": 11, "from": "God", "to": "Scott", "width": 1}, {"count": 16, "from": "God", "to": "Linda", "width": 1}, {"count": 13, "from": "God", "to": "Jimmy", "width": 1}, {"count": 15, "from": "God", "to": "Mr. Mackey", "width": 1}, {"count": 18, "from": "God", "to": "Satan", "width": 1}, {"count": 28, "from": "God", "to": "Tweek", "width": 1}, {"count": 12, "from": "God", "to": "Michael", "width": 1}, {"count": 14, "from": "God", "to": "Mayor McDaniels", "width": 1}, {"count": 13, "from": "God", "to": "Woman", "width": 1}, {"count": 16, "from": "Dad", "to": "Randy", "width": 1}, {"count": 17, "from": "Dad", "to": "Shelly", "width": 1}, {"count": 201, "from": "Randy", "to": "Sharon", "width": 1}, {"count": 76, "from": "Randy", "to": "All", "width": 1}, {"count": 67, "from": "Randy", "to": "Stanley", "width": 1}, {"count": 59, "from": "Randy", "to": "Shelly", "width": 1}, {"count": 36, "from": "Randy", "to": "Jesus", "width": 1}, {"count": 30, "from": "Randy", "to": "People", "width": 1}, {"count": 20, "from": "Randy", "to": "Gerald", "width": 1}, {"count": 22, "from": "Randy", "to": "Everyone", "width": 1}, {"count": 22, "from": "Randy", "to": "Right", "width": 1}, {"count": 22, "from": "Randy", "to": "Randy", "width": 1}, {"count": 33, "from": "Randy", "to": "Stephen", "width": 1}, {"count": 19, "from": "Randy", "to": "Nelson", "width": 1}, {"count": 19, "from": "Randy", "to": "Darryl", "width": 1}, {"count": 18, "from": "Randy", "to": "Mayor", "width": 1}, {"count": 16, "from": "Randy", "to": "New", "width": 1}, {"count": 16, "from": "Randy", "to": "Boys", "width": 1}, {"count": 15, "from": "Randy", "to": "Obama", "width": 1}, {"count": 15, "from": "Randy", "to": "Shelley", "width": 1}, {"count": 14, "from": "Randy", "to": "Muhammad", "width": 1}, {"count": 12, "from": "Randy", "to": "TV", "width": 1}, {"count": 12, "from": "Randy", "to": "Principal", "width": 1}, {"count": 12, "from": "Randy", "to": "Cruise", "width": 1}, {"count": 11, "from": "Randy", "to": "Towelie", "width": 1}, {"count": 11, "from": "Randy", "to": "President", "width": 1}, {"count": 18, "from": "Randy", "to": "Jimbo", "width": 1}, {"count": 21, "from": "Randy", "to": "Crowd", "width": 1}, {"count": 19, "from": "All", "to": "Sharon", "width": 1}, {"count": 16, "from": "All", "to": "Gerald", "width": 1}, {"count": 18, "from": "All", "to": "Chef", "width": 1}, {"count": 14, "from": "All", "to": "Jimbo", "width": 1}, {"count": 19, "from": "All", "to": "Mr. Garrison", "width": 1}, {"count": 16, "from": "All", "to": "Jimmy", "width": 1}, {"count": 11, "from": "All", "to": "Michael", "width": 1}, {"count": 15, "from": "All", "to": "PC Principal", "width": 1}, {"count": 17, "from": "All", "to": "Yates", "width": 1}, {"count": 16, "from": "All", "to": "Mayor McDaniels", "width": 1}, {"count": 11, "from": "Mom", "to": "Shelly", "width": 1}, {"count": 120, "from": "Sharon", "to": "Stanley", "width": 1}, {"count": 13, "from": "Sharon", "to": "Sheila", "width": 1}, {"count": 13, "from": "Sharon", "to": "Shelly", "width": 1}, {"count": 183, "from": "Eric", "to": "Liane", "width": 1}, {"count": 25, "from": "Eric", "to": "Chef", "width": 1}, {"count": 61, "from": "Eric", "to": "Mr. Garrison", "width": 1}, {"count": 40, "from": "Eric", "to": "Heidi", "width": 1}, {"count": 31, "from": "Eric", "to": "Jimmy", "width": 1}, {"count": 63, "from": "Eric", "to": "Mr. Mackey", "width": 1}, {"count": 40, "from": "Eric", "to": "Principal Victoria", "width": 1}, {"count": 23, "from": "Eric", "to": "PC Principal", "width": 1}, {"count": 18, "from": "Eric", "to": "Mrs. Garrison", "width": 1}, {"count": 11, "from": "Eric", "to": "Stella", "width": 1}, {"count": 11, "from": "Eric", "to": "Ms. Stevens", "width": 1}, {"count": 35, "from": "Ike", "to": "Sheila", "width": 1}, {"count": 29, "from": "Ike", "to": "Gerald", "width": 1}, {"count": 14, "from": "Tolkien", "to": "Mr. Mackey", "width": 1}, {"count": 17, "from": "Sheila", "to": "Gerald", "width": 1}, {"count": 22, "from": "Stephen", "to": "Linda", "width": 1}, {"count": 11, "from": "Jesus", "to": "Father", "width": 1}, {"count": 19, "from": "Jesus", "to": "Santa", "width": 1}, {"count": 12, "from": "Jesus", "to": "Jimbo", "width": 1}, {"count": 21, "from": "Jesus", "to": "Mr. Garrison", "width": 1}, {"count": 20, "from": "Jesus", "to": "Tweek", "width": 1}, {"count": 36, "from": "Jesus", "to": "Mr. Slave", "width": 1}, {"count": 13, "from": "Jesus", "to": "Yates", "width": 1}, {"count": 15, "from": "Clyde", "to": "Bebe", "width": 1}, {"count": 22, "from": "Clyde", "to": "Betsy", "width": 1}, {"count": 19, "from": "Stanley", "to": "Mr. Garrison", "width": 1}, {"count": 19, "from": "Chef", "to": "woman", "width": 1}, {"count": 13, "from": "Chef", "to": "Chef", "width": 1}, {"count": 11, "from": "Chef", "to": "The Boys", "width": 1}, {"count": 96, "from": "Jimbo", "to": "Ned", "width": 1}, {"count": 12, "from": "Jimbo", "to": "Mexican", "width": 1}, {"count": 94, "from": "Mr. Garrison", "to": "Hat", "width": 1}, {"count": 15, "from": "Mr. Garrison", "to": "Rick", "width": 1}, {"count": 13, "from": "Mr. Garrison", "to": "Wendy", "width": 1}, {"count": 13, "from": "Mr. Garrison", "to": "Barbrady", "width": 1}, {"count": 12, "from": "Mr. Garrison", "to": "Officer", "width": 1}, {"count": 12, "from": "Mr. Garrison", "to": "Filmore", "width": 1}, {"count": 27, "from": "Hat", "to": "Crowd", "width": 1}, {"count": 14, "from": "Craig", "to": "Tweek", "width": 1}, {"count": 20, "from": "Wendy", "to": "Bebe", "width": 1}, {"count": 13, "from": "Wendy", "to": "Garrison", "width": 1}, {"count": 12, "from": "Wendy", "to": "Mr. Mackey", "width": 1}, {"count": 11, "from": "Wendy", "to": "Red", "width": 1}, {"count": 13, "from": "Scott", "to": "Terrance", "width": 1}, {"count": 12, "from": "Scott", "to": "Scott", "width": 1}, {"count": 67, "from": "Terrance", "to": "Phillip", "width": 1}, {"count": 11, "from": "Terrance", "to": "Celine", "width": 1}, {"count": 22, "from": "Terrance", "to": "Narrator", "width": 1}, {"count": 12, "from": "Terrance", "to": "Announcer", "width": 1}, {"count": 20, "from": "Phillip", "to": "Narrator", "width": 1}, {"count": 11, "from": "Linda", "to": "Mark", "width": 1}, {"count": 11, "from": "Linda", "to": "Chris", "width": 1}, {"count": 44, "from": "Jimmy", "to": "Timmy", "width": 1}, {"count": 11, "from": "Jimmy", "to": "Jimmy", "width": 1}, {"count": 23, "from": "Jimmy", "to": "Nathan", "width": 1}, {"count": 18, "from": "Mr. Mackey", "to": "Garrison", "width": 1}, {"count": 13, "from": "Mr. Mackey", "to": "Principal", "width": 1}, {"count": 11, "from": "Mr. Mackey", "to": "Mackey", "width": 1}, {"count": 11, "from": "Mr. Mackey", "to": "Tooth", "width": 1}, {"count": 11, "from": "Shelly", "to": "Skyler", "width": 1}, {"count": 49, "from": "Reporter", "to": "Tom", "width": 1}, {"count": 21, "from": "Tom", "to": "Chris", "width": 1}, {"count": 29, "from": "Tom", "to": "Field reporter", "width": 1}, {"count": 12, "from": "Tom", "to": "Field Reporter", "width": 1}, {"count": 43, "from": "Timmy", "to": "Timmy", "width": 1}, {"count": 11, "from": "Timmy", "to": "Skyler", "width": 1}, {"count": 22, "from": "Principal Victoria", "to": "Garrison", "width": 1}, {"count": 17, "from": "Grandpa", "to": "Billy", "width": 1}, {"count": 18, "from": "Satan", "to": "Chris", "width": 1}, {"count": 37, "from": "Satan", "to": "Saddam", "width": 1}, {"count": 21, "from": "Tweek", "to": "Richard", "width": 1}, {"count": 12, "from": "Mr. Hankey", "to": "Santa", "width": 1}, {"count": 34, "from": "Nathan", "to": "Mimsy", "width": 1}, {"count": 32, "from": "Al Gore", "to": "ManBearPig", "width": 1}, {"count": 29, "from": "Garrison", "to": "Rick", "width": 1}, {"count": 20, "from": "Garrison", "to": "President", "width": 1}, {"count": 18, "from": "Garrison", "to": "Mr. Hat", "width": 1}, {"count": 12, "from": "Garrison", "to": "Mayor McDaniels", "width": 1}, {"count": 11, "from": "Garrison", "to": "Mr. Dawkins", "width": 1}, {"count": 31, "from": "Fianc\u00e9e", "to": "Richard", "width": 1}, {"count": 12, "from": "People", "to": "Mayor McDaniels", "width": 1}, {"count": 25, "from": "Marvin", "to": "Billy", "width": 1}, {"count": 13, "from": "Mingie", "to": "Gary", "width": 1}, {"count": 24, "from": "Michael", "to": "Blanket", "width": 1}, {"count": 24, "from": "Cartman as Jennifer Lopez", "to": "Ben", "width": 1}, {"count": 15, "from": "Ben", "to": "Jenny", "width": 1}, {"count": 12, "from": "PC Principal", "to": "Woman", "width": 1}, {"count": 12, "from": "PC Principal", "to": "Mackey", "width": 1}, {"count": 16, "from": "Narrator", "to": "Pip", "width": 1}, {"count": 12, "from": "Narrator", "to": "Canadian", "width": 1}, {"count": 20, "from": "Mrs. Garrison", "to": "woman", "width": 1}, {"count": 16, "from": "Santa", "to": "Santa", "width": 1}, {"count": 19, "from": "Russell Crowe", "to": "Tugger", "width": 1}, {"count": 11, "from": "Steve", "to": "Customer", "width": 1}, {"count": 11, "from": "Mexican", "to": "Jeff", "width": 1}, {"count": 12, "from": "Pip", "to": "Joe", "width": 1}, {"count": 12, "from": "Mayor McDaniels", "to": "Barbrady", "width": 1}, {"count": 14, "from": "Announcer", "to": "Ladies", "width": 1}, {"count": 13, "from": "Announcer", "to": "Canadian", "width": 1}, {"count": 15, "from": "Elder Garth", "to": "Haman", "width": 1}, {"count": 15, "from": "Cat", "to": "Johnson", "width": 1}, {"count": 14, "from": "Chief elder", "to": "Moses", "width": 1}, {"count": 13, "from": "Crowd Members", "to": "Douche", "width": 1}, {"count": 11, "from": "The C***", "to": "Mysterion", "width": 1}, {"count": 11, "from": "Singers", "to": "Paris", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
